@@ -26,6 +26,23 @@ def ping():
     return "pong"
 
 
+@app.route("/get-all/<format>", methods=["GET"])
+def get_all_note(format):
+    # Read the notes data from the JSON file
+    notes = utils.read_json("note_data.json")
+
+    
+
+    if format in ["yml", "yaml"]:
+        # Convert the notes to YAML format and return it as plain text
+        yaml_data = utils.convert_json_to_yml(notes)
+        return app.response_class(yaml_data, content_type='application/x-yaml')
+    else :
+        # Return notes in JSON format
+        return jsonify(notes)
+
+    return jsonify({'error': 'Unsupported format'}), 200
+
 @app.route("/create-note", methods=["POST"])
 def create_note():
     required_fields = ['title', 'content']
@@ -95,7 +112,7 @@ def update_note():
             utils.write_json_to_file(notes, "note_data.json")
             return jsonify({'message': f'Note {data["id"]} updated successfully.'})
 
-    return jsonify({'error': 'Note not found.'}), 404
+    return jsonify({'error': 'Note not found.'}), 200
 
 
 if __name__ == "__main__":
