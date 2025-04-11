@@ -50,5 +50,15 @@ def create_note():
     return jsonify(data)
 
 
+@app.route('/get-note/<note_id>', methods=['GET'])
+def get_note(note_id):
+    notes = utils.read_json("note_data.json")
+    
+    for note in notes:
+        if note.get('id') == note_id:
+            return jsonify(note)
+
+    return jsonify({'error': 'Note not found.'}), 200
+
 if __name__ == "__main__":
     app.run(debug=True)
