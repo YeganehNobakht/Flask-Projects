@@ -29,7 +29,7 @@ def ping():
 @app.route("/get-all/<format>", methods=["GET"])
 def get_all_note(format):
     # Read the notes data from the JSON file
-    notes = utils.read_json("note_data.json")
+    notes = utils.read_json("./note_data.json")
 
     
 
@@ -57,11 +57,11 @@ def create_note():
     data["timestamp"] = datetime.now().isoformat()
 
     # Read existing notes and append the new one
-    note_data = utils.read_json("note_data.json")
+    note_data = utils.read_json("./note_data.json")
     note_data.append(data)
 
     # Write back to file
-    utils.write_json_to_file(note_data, "note_data.json")
+    utils.write_json_to_file(note_data, "./note_data.json")
 
     # Return the newly added note
     return jsonify(data)
@@ -108,7 +108,23 @@ def update_note():
     # Find the note with the matching ID and update it
     for i, note in enumerate(notes):
         if note.get('id') == data.get("id"):
-            notes[i] = {**note, **data}  # Merge and update the note
+            
+            history = note.get("history", [])
+            current_version = {
+                "title": note["title"],
+                "content": note["content"],
+                "timestamp": note["timestamp"]
+            }
+            history.append(current_version)
+
+            # Update the note
+            notes[i] = {
+                **note,  # keep id and any existing data
+                **data,
+                "timestamp": datetime.now().isoformat(),
+                "history": history  # updated history
+            }
+
             utils.write_json_to_file(notes, "note_data.json")
             return jsonify({'message': f'Note {data["id"]} updated successfully.'})
 
