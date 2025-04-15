@@ -50,12 +50,9 @@ Create a `.env` file in the root directory of the project with the following con
 EMAIL_USERNAME=your_email@gmail.com
 EMAIL_PASSWORD=your_app_password
 TO_EMAIL=recipient_email@example.com
-
-
-
+```
 
 
 # Notes API Documentation
 
 This API allows you to manage your notes, including the ability to create, retrieve, update, delete, and export notes in various formats such as JSON and YAML.
-
