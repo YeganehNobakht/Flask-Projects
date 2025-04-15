@@ -1,19 +1,34 @@
 from flask import Flask, request, jsonify
-from dotenv import load_dotenv
+import emailer
+import utils
 
 app = Flask(__name__)
-
-load_dotenv() #to load .env values
-
-
 
 @app.route("/webhook", methods=["POST"])
 def webhook():
     if not request.is_json:
         return jsonify({"error": "request must be json"}), 400
     data = request.get_json()
-    print("Received data:", data) 
-    return jsonify({"message": "Alert processed successfully"}), 200
+
+    alerts = data.get("alerts")
+    for alert in alerts:
+        try:
+            team = alert.get("labels", {}).get("team", "unknown_team")
+            severity = alert.get("labels", {}).get("severity", "unknown_severity")
+            summary = alert.get("annotations", {}).get("summary", "No summary")
+            description = alert.get("annotations", {}).get("description", "No description")
+
+            # 1. Store to file
+            utils.store_data(team, severity, alert)
+
+            # 2. Send email notification
+            emailer.send_email_alert(summary, description)
+
+        except Exception as e:
+            print(f"Error handling alert: {e}")
+            continue
+
+        return jsonify({"message": "Alerts processed"}), 200
 
 
 
