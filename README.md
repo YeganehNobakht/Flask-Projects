@@ -31,13 +31,6 @@ This Flask app acts as a webhook receiver for Alertmanager alerts. It processes 
     pip install -r requirements.txt
     ```
 
-    You may need to create a `requirements.txt` file containing the following:
-
-    ```
-    Flask==2.1.0
-    python-dotenv==0.19.2
-    ```
-
 ## Configuration
 
 ### 1. Create a `.env` file
